@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Rimmerge-Project/rimmerge-rules/schema/def-cache-carriers.schema.json",
+  "title": "def-cache-carriers",
+  "description": "Which mods/plugins act as a def-cache plugin, detected by the DLL they drop and the Player.log line prefix they write.",
+  "type": "object",
+  "required": ["schema", "carriers"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "carriers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "plugin_dir",
+          "file_prefix",
+          "file_extension",
+          "match",
+          "log_line_prefix",
+          "evidence"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "A short, stable identifier for this carrier."
+          },
+          "plugin_dir": {
+            "type": "string",
+            "description": "The subfolder of a mod's own loaded folder the DLL is dropped in."
+          },
+          "file_prefix": {
+            "type": "string",
+            "description": "The DLL's file-name prefix, matched case-insensitively."
+          },
+          "file_extension": {
+            "type": "string",
+            "pattern": "^\\."
+          },
+          "match": {
+            "type": "string",
+            "enum": ["case_insensitive_prefix"]
+          },
+          "recursive": {
+            "type": "boolean",
+            "description": "Whether to walk plugin_dir recursively. Defaults to false when omitted."
+          },
+          "log_line_prefix": {
+            "type": "string",
+            "description": "The prefix of this carrier's own Player.log lines, matched exactly on the trimmed line."
+          },
+          "evidence": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Rimmerge-Project/rimmerge-rules/schema/precedence.schema.json",
+  "title": "precedence",
+  "description": "Which def type has a verified rule for resolving a multi-owner conflict.",
+  "type": "object",
+  "required": ["schema", "rules"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "rules": {
+      "type": "object",
+      "description": "Keyed by def type (e.g. \"ExampleFramework.GroupDef\").",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["rule", "evidence"],
+        "additionalProperties": false,
+        "properties": {
+          "rule": {
+            "type": "string",
+            "enum": ["unverified", "prefer_outside_framework"]
+          },
+          "framework": {
+            "type": "string",
+            "description": "Required when rule is prefer_outside_framework: the mod id the preferred instance must live outside of."
+          },
+          "key_priority": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Top-level field names, most-preferred first, used to break a tie among instances outside the framework."
+          },
+          "evidence": {
+            "type": "object",
+            "required": ["source", "verified"],
+            "additionalProperties": true,
+            "properties": {
+              "source": { "type": "string" },
+              "verified": { "type": "string" },
+              "note": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

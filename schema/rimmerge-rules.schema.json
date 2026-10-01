@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Rimmerge-Project/rimmerge-rules/schema/rimmerge-rules.schema.json",
+  "title": "rimmerge-rules",
+  "description": "The envelope scripts/build.mjs assembles from data/*.json and Rimmerge itself fetches/embeds. Each section is independent: a malformed section never invalidates the others, so this schema only requires the top-level shape, not each section's own internal validity (see the per-section schemas in this same directory for that).",
+  "type": "object",
+  "required": ["schema"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "precedence": { "type": "object" },
+    "patch_operations": { "type": "object" },
+    "def_cache_carriers": { "type": "object" },
+    "tag_rules": { "type": "object" },
+    "log_shapes": { "type": "object" }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "rules": {
+    "rjw.RaceGroupDef": {
+      "rule": "prefer_outside_framework",
+      "framework": "rim.job.world",
+      "key_priority": ["pawnKindNames", "raceNames"],
+      "evidence": {
+        "source": "decompiled the framework assembly (1.6 build): its group-def lookup helper",
+        "verified": "2026-09-13",
+        "note": "The helper prefers an instance owned outside the framework itself, then a pawnKind match over a race match, then the first in load order."
+      }
+    }
+  }
+}

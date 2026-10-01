@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "precedence": {
+    "schema": 1,
+    "rules": {
+      "rjw.RaceGroupDef": {
+        "rule": "prefer_outside_framework",
+        "framework": "rim.job.world",
+        "key_priority": [
+          "pawnKindNames",
+          "raceNames"
+        ],
+        "evidence": {
+          "source": "decompiled the framework assembly (1.6 build): its group-def lookup helper",
+          "verified": "2026-09-13",
+          "note": "The helper prefers an instance owned outside the framework itself, then a pawnKind match over a race match, then the first in load order."
+        }
+      }
+    }
+  },
+  "patch_operations": {
+    "schema": 1,
+    "classes": [
+      {
+        "class": "SafePatcher.PatchOperationSetModExtension",
+        "match": "suffix",
+        "behaviour": "set_mod_extension",
+        "evidence": "each <value> li replaces the modExtensions item with the same Class, else appends"
+      },
+      {
+        "class": "RR.PatchOperationAddOrReplace",
+        "match": "suffix",
+        "behaviour": "add_or_replace",
+        "evidence": "xpath names a container; children replace same-tag children, else append"
+      },
+      {
+        "class": "RR.PatchOperationReplaceResearchCoords",
+        "match": "suffix",
+        "behaviour": "replace_research_coords",
+        "evidence": "IL-verified against ResearchReinvented_SteppingStones.dll"
+      }
+    ],
+    "gates": [
+      {
+        "class": "RR.",
+        "match": "prefix",
+        "behaviour": "mods_loaded_gate",
+        "fields": {
+          "requires_all": "doesRequire",
+          "conditional_type": "conditionalType",
+          "conditional_param": "conditionalParam"
+        },
+        "conditional_types": {
+          "Cond_ModsLoaded": "all_loaded",
+          "Cond_ModsNotLoaded": "none_loaded"
+        },
+        "evidence": "IL-verified: RR.PatchOperationCustomBase::Skip"
+      }
+    ]
+  },
+  "def_cache_carriers": {
+    "schema": 1,
+    "carriers": [
+      {
+        "id": "gagarin",
+        "plugin_dir": "Plugins",
+        "file_prefix": "Gagarin",
+        "file_extension": ".dll",
+        "match": "case_insensitive_prefix",
+        "recursive": true,
+        "log_line_prefix": "GAGARIN:",
+        "evidence": "a def-cache plugin; not a mod with its own packageId, detected by the DLL it drops under Plugins/"
+      }
+    ]
+  },
+  "tag_rules": {
+    "schema": 1,
+    "rules": []
+  },
+  "log_shapes": {
+    "schema": 1,
+    "patch_stack_blocks": [
+      {
+        "id": "xml-extensions-stack-block",
+        "match": "template",
+        "start": "[{mod:text} - Start of stack trace]",
+        "end": "[End of stack trace]",
+        "trailer": "Source file:{path:text}",
+        "xpath_detail_prefix": "xpath=",
+        "branch_markers": {
+          "match": "<match>",
+          "nomatch": "<nomatch>"
+        },
+        "evidence": "XmlExtensions.dll file version 1.9.4 (assembly version 1.3.0.0; XML Extensions, workshop 2574315206, 1.6/Assemblies), decompiled 2026-09-23, ilspycmd 8.2.0.7535: XmlExtensions.ErrorManager.PrintErrors(string source, ModContentPack mod) writes \"[\" + mod.Name + \" - Start of stack trace]\", the collected error lines, \"[End of stack trace]\" and \"Source file: \" + source, then logs it with Log.Error"
+      }
+    ],
+    "texture_fallbacks": [
+      {
+        "id": "dds-png-fallback",
+        "match": "template",
+        "head": "DDS loading failed for '{path:text}': {reason:text}",
+        "dimensions": "DDS loading failed for '{path:text}': Cannot load compressed texture with non multiple of 4 dimensions of {width:int}x{height:int} and format {format:token}",
+        "trailer": "Loading from png instead.",
+        "evidence": "GraphicSetter.dll (Graphics Settings+, workshop 1678847247, 1.6/Assemblies; it carries no real version, 1.0.0.0, so sha256 4997bd1f8f94443ef2fa9b25fb75ba15de5b1fc2427d26b81e31c890f40c77d0 identifies the build), decompiled 2026-09-30, ilspycmd 8.2.0.7535: GraphicSetter.DDSHelper.TryLoadDDS writes Verse.Log.Warning(\"DDS loading failed for '\" + ddsPath + \"': \" + DDSLoader.error + \"\\nLoading from png instead.\"), one warning on two lines (when an exception is also caught, the DDS line is logged alone, without the trailer, before a separate warning); GraphicSetter.DDSLoader.LoadDDS sets error = $\"Cannot load compressed texture with non multiple of 4 dimensions of {width}x{height} and format {format}\"; TryLoadDDS runs inside the Harmony prefix GraphicSetter.Patches.TextureLoadingPatch.LoadTexture_Patch on Verse.ModContentLoader<Texture2D>.LoadTexture"
+      }
+    ],
+    "stack_back_references": [
+      {
+        "id": "harmony-duplicate-stacktrace",
+        "match": "template",
+        "original": "[Ref {id:hex}]",
+        "stub": "[Ref {id:hex}] Duplicate stacktrace, see ref for original",
+        "evidence": "HarmonyMod.dll 2.4.2.0 (Harmony, workshop 2009463077, Current/Assemblies, which LoadFolders.xml maps to 1.6), decompiled 2026-09-30, ilspycmd 8.2.0.7535: HarmonyMod.ExceptionTools.ExtractHarmonyEnhancedStackTrace returns $\"[Ref {hash:X}]\" + \"\\n\" + trace for a trace's first occurrence and $\"[Ref {hash:X}]\" + \" Duplicate stacktrace, see ref for original\" for a repeat (hash = 32-bit FNV-1a of the trace text, uppercase hex, unpadded); it becomes the result of System.Environment.GetStackTrace through the Harmony prefix HarmonyMod.Environment_GetStackTrace_Patch, so the log call that prints it depends on the exception"
+      }
+    ]
+  }
+}

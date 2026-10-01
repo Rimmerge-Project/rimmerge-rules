@@ -1,0 +1,18 @@
+name: Bug report
+description: A row in this repository is wrong, or the bundle doesn't match rimmerge's parser.
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What's wrong
+      description: Which file, which row, and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: How you know
+      description: Decompiled source, IL inspection, or a rimmerge parse error/warning (paste it).
+    validations:
+      required: true

@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "carriers": [
+    {
+      "id": "gagarin",
+      "plugin_dir": "Plugins",
+      "file_prefix": "Gagarin",
+      "file_extension": ".dll",
+      "match": "case_insensitive_prefix",
+      "recursive": true,
+      "log_line_prefix": "GAGARIN:",
+      "evidence": "a def-cache plugin; not a mod with its own packageId, detected by the DLL it drops under Plugins/"
+    }
+  ]
+}

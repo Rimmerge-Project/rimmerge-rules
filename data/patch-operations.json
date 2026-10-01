@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "classes": [
+    {
+      "class": "SafePatcher.PatchOperationSetModExtension",
+      "match": "suffix",
+      "behaviour": "set_mod_extension",
+      "evidence": "each <value> li replaces the modExtensions item with the same Class, else appends"
+    },
+    {
+      "class": "RR.PatchOperationAddOrReplace",
+      "match": "suffix",
+      "behaviour": "add_or_replace",
+      "evidence": "xpath names a container; children replace same-tag children, else append"
+    },
+    {
+      "class": "RR.PatchOperationReplaceResearchCoords",
+      "match": "suffix",
+      "behaviour": "replace_research_coords",
+      "evidence": "IL-verified against ResearchReinvented_SteppingStones.dll"
+    }
+  ],
+  "gates": [
+    {
+      "class": "RR.",
+      "match": "prefix",
+      "behaviour": "mods_loaded_gate",
+      "fields": {
+        "requires_all": "doesRequire",
+        "conditional_type": "conditionalType",
+        "conditional_param": "conditionalParam"
+      },
+      "conditional_types": {
+        "Cond_ModsLoaded": "all_loaded",
+        "Cond_ModsNotLoaded": "none_loaded"
+      },
+      "evidence": "IL-verified: RR.PatchOperationCustomBase::Skip"
+    }
+  ]
+}

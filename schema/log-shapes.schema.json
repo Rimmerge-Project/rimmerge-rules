@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Rimmerge-Project/rimmerge-rules/schema/log-shapes.schema.json",
+  "title": "log-shapes",
+  "description": "The Player.log formats that mods (not the game) print, as format templates. A template is literal text with typed placeholders written {name:type}; name is [a-z][a-z_]{0,31} and unique within the template, type is one of text (one or more characters, spaces allowed), token (one or more non-space characters), int (one or more ASCII digits) or hex (1 to 16 hex digits); a literal brace is written {{ or }}. A template matches the whole trimmed line. Limits Rimmerge enforces when it loads a row (a row over a limit is ignored): at most 512 bytes and 8 placeholders per template, at least 4 bytes of literal text, at most 8 rows per role, at most 32 bytes for a plain string. Required placeholders per template: start needs mod; the stack block trailer needs path; head and dimensions need path, and dimensions also width, height and format; original and stub need id. One array per role; a role this schema does not list is not read by an older Rimmerge.",
+  "type": "object",
+  "required": ["schema", "patch_stack_blocks", "texture_fallbacks", "stack_back_references"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "patch_stack_blocks": {
+      "type": "array",
+      "description": "A patch-reporting mod's stack-trace block: a start line, the operation lines, an end line, and an optional trailing source-file line.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "match",
+          "start",
+          "end",
+          "trailer",
+          "xpath_detail_prefix",
+          "branch_markers",
+          "evidence"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+          "match": { "type": "string", "enum": ["template"] },
+          "start": {
+            "type": "string",
+            "pattern": "^.{1,512}$",
+            "description": "The block's first line; must capture the mod's name as {mod:text}."
+          },
+          "end": {
+            "type": "string",
+            "pattern": "^.{1,512}$",
+            "description": "The block's last line, usually with no placeholder (an exact match)."
+          },
+          "trailer": {
+            "type": "string",
+            "pattern": "^.{1,512}$",
+            "description": "The optional line after the end line; must capture {path:text}."
+          },
+          "xpath_detail_prefix": {
+            "type": "string",
+            "pattern": "^.{1,32}$",
+            "description": "What an operation line's parenthesized detail starts with when it names an xpath."
+          },
+          "branch_markers": {
+            "type": "object",
+            "required": ["match", "nomatch"],
+            "additionalProperties": false,
+            "properties": {
+              "match": { "type": "string", "pattern": "^.{1,32}$" },
+              "nomatch": { "type": "string", "pattern": "^.{1,32}$" }
+            }
+          },
+          "evidence": { "type": "string" }
+        }
+      }
+    },
+    "texture_fallbacks": {
+      "type": "array",
+      "description": "A texture loader's fallback: a head line saying a compressed texture failed to load, and a trailer line saying the PNG was used instead.",
+      "items": {
+        "type": "object",
+        "required": ["id", "match", "head", "dimensions", "trailer", "evidence"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+          "match": { "type": "string", "enum": ["template"] },
+          "head": {
+            "type": "string",
+            "pattern": "^.{1,512}$",
+            "description": "Any head line of the fallback; must capture {path:text}."
+          },
+          "dimensions": {
+            "type": "string",
+            "pattern": "^.{1,512}$",
+            "description": "The head line's form that reports the texture's size; must capture path, {width:int}, {height:int} and {format:token}."
+          },
+          "trailer": {
+            "type": "string",
+            "pattern": "^.{1,512}$",
+            "description": "The line that follows the head."
+          },
+          "evidence": { "type": "string" }
+        }
+      }
+    },
+    "stack_back_references": {
+      "type": "array",
+      "description": "A patching library's back-reference: a stack trace printed once under an id, and later repeats that only name the id.",
+      "items": {
+        "type": "object",
+        "required": ["id", "match", "original", "stub", "evidence"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+          "match": { "type": "string", "enum": ["template"] },
+          "original": {
+            "type": "string",
+            "pattern": "^.{1,512}$",
+            "description": "The line that names the original trace; must capture {id:hex}."
+          },
+          "stub": {
+            "type": "string",
+            "pattern": "^.{1,512}$",
+            "description": "The line that repeats it; must capture {id:hex}."
+          },
+          "evidence": { "type": "string" }
+        }
+      }
+    }
+  }
+}

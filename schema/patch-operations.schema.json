@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Rimmerge-Project/rimmerge-rules/schema/patch-operations.schema.json",
+  "title": "patch-operations",
+  "description": "Which custom (non-vanilla) PatchOperation classes map onto which modelled behaviour, and which classes gate on a mods-loaded conditional.",
+  "type": "object",
+  "required": ["schema", "classes", "gates"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["class", "match", "behaviour", "evidence"],
+        "additionalProperties": false,
+        "properties": {
+          "class": {
+            "type": "string",
+            "description": "The .NET type name (or the suffix/prefix of it) as it appears in a <Operation Class=\"...\"> attribute."
+          },
+          "match": {
+            "type": "string",
+            "enum": ["suffix", "prefix"]
+          },
+          "behaviour": {
+            "type": "string",
+            "enum": ["set_mod_extension", "add_or_replace", "replace_research_coords"]
+          },
+          "evidence": {
+            "type": "string",
+            "description": "How this row was verified (decompiled source, IL inspection, ...)."
+          }
+        }
+      }
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["class", "match", "behaviour", "fields", "evidence"],
+        "additionalProperties": false,
+        "properties": {
+          "class": { "type": "string" },
+          "match": {
+            "type": "string",
+            "enum": ["suffix", "prefix"]
+          },
+          "behaviour": {
+            "type": "string",
+            "enum": ["mods_loaded_gate"]
+          },
+          "fields": {
+            "type": "object",
+            "required": ["requires_all", "conditional_type", "conditional_param"],
+            "additionalProperties": false,
+            "properties": {
+              "requires_all": { "type": "string" },
+              "conditional_type": { "type": "string" },
+              "conditional_param": { "type": "string" }
+            }
+          },
+          "conditional_types": {
+            "type": "object",
+            "description": "Maps a declared conditional-type class name to a modelled kind.",
+            "additionalProperties": {
+              "type": "string",
+              "enum": ["all_loaded", "none_loaded"]
+            }
+          },
+          "evidence": { "type": "string" }
+        }
+      }
+    }
+  }
+}

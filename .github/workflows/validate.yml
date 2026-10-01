@@ -1,0 +1,25 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Least privilege: this workflow only validates and checks for drift —
+# it never writes back to the repo.
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: schema validation + bundle drift check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+
+      - name: validate data/*.json against schema/*.schema.json, and check for drift
+        run: bun scripts/build.mjs --check

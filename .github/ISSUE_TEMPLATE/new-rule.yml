@@ -1,0 +1,38 @@
+name: New rule
+description: Propose a precedence rule, patch-operation behaviour, def-cache carrier, or tag rule.
+labels: ["new rule"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        See [CONTRIBUTING.md](../../CONTRIBUTING.md) first — this
+        repository only carries what RimSort's community-rules format
+        can't express, and every row needs evidence.
+  - type: dropdown
+    id: section
+    attributes:
+      label: Section
+      options:
+        - precedence
+        - patch-operations
+        - def-cache-carriers
+        - tag-rules
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What is the rule?
+      description: The def type / class / carrier / tag, and what you're proposing for it.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: >-
+        Decompiled source (assembly, version, class/method) or IL
+        inspection. "It works in my load order" alone is not evidence —
+        see CONTRIBUTING.md.
+    validations:
+      required: true

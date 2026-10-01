@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Rimmerge-Project/rimmerge-rules/schema/tag-rules.schema.json",
+  "title": "tag-rules",
+  "description": "Signals that earn a mod a framework/category tag. Never read directly into a running Rimmerge session — reaches the sorter only through an explicit import into a profile's rules.json.",
+  "type": "object",
+  "required": ["schema", "rules"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tag", "any_of"],
+        "additionalProperties": false,
+        "properties": {
+          "tag": {
+            "type": "string",
+            "description": "The tag this rule assigns, e.g. \"framework\"."
+          },
+          "any_of": {
+            "type": "array",
+            "minItems": 1,
+            "description": "The signals that earn the tag; matching any one is enough.",
+            "items": {
+              "type": "object",
+              "required": ["kind"],
+              "properties": {
+                "kind": { "type": "string" },
+                "value": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
